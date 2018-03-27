@@ -259,11 +259,32 @@ ifeq ($(OS),linux)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION
+ifeq ($(ARCH),mipsel)
+PREFIX=mipsel-linux-
+HOST=mipsel-linux
+
+SYSROOT=/opt/buildroot-gcc463/usr/mipsel-buildroot-linux-uclibc/sysroot
+CC=$(PREFIX)gcc --sysroot $(SYSROOT)
+CPP=$(PREFIX)cpp
+LD=$(CC)
+RANLIB=$(PREFIX)ranlib
+STRIP=$(PREFIX)strip -x
+CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
+COPT+=-fpic -ffunction-sections -funwind-tables -fno-short-enums
+#JAVA_INCLUDES=
+CINCLUDES+=-I/opt/buildroot-gcc463/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/include/ # -I/usr/include
+LIBS=-nostdlib -L"/opt/buildroot-gcc463/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/lib/" -lgcc -lc -ldl -lm
+LDFLAGS+=-Wl,-shared,-Bsymbolic
+FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
+FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=$(HOST)
+
+else
 ifeq ($(DYNAMIC_LIBFFI),true)
 LDFLAGS+=-Wl,-soname,$@
 else
 # Ensure we bind to local libffi symbols
 LDFLAGS+=-Wl,-soname,$@,-Bsymbolic
+endif
 endif
 endif
 

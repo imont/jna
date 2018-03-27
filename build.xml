@@ -232,6 +232,9 @@
     <condition property="os.prefix" value="linux-${jre.arch}">
       <os name="Linux"/>
     </condition>
+    <condition property="os.prefix" value="linux-mipsel">
+      <os name="Linux"/>
+    </condition>
     <condition property="os.prefix" value="aix-${jre.arch}">
       <os name="AIX"/>
     </condition>
@@ -691,6 +694,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <!-- Ensure Makefile ARCH property properly set -->
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+    </condition>
+    <condition property="ARCH" value="mipsel">
+      <equals arg1="${os.prefix}" arg2="linux-mipsel"/>
     </condition>
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="android-arm"/>
